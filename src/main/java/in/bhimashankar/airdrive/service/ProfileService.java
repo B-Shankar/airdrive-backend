@@ -34,7 +34,6 @@ public class ProfileService {
                 .lastName(profileDTO.getLastName())
                 .photoUrl(profileDTO.getPhotoUrl())
                 .credits(5)
-                .createdAt(Instant.now())
                 .build();
 
         ProfileDocument savedProfile = profileRepository.save(profile);
