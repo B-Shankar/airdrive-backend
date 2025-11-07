@@ -1,3 +1,17 @@
+logging:
+  level:
+    root: INFO
+    in.bhimashankar.airdrive: INFO
+
+server:
+  servlet:
+    context-path: /api/v1.0
+
 spring:
   application:
     name: airdrive
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/airdrive
+      auto-index-creation: true
