@@ -10,13 +10,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler extends RuntimeException {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(DuplicateKeyException.class)
     public ResponseEntity<?> handleDuplicateEmailException(DuplicateKeyException exception) {
         Map<String, Object> data = new HashMap<>();
-        data.put("status", HttpStatus.CONFLICT);
-        data.put("message", exception.getMessage());
+        data.put("status", HttpStatus.CONFLICT.value());
+        data.put("message", "A profile with this email already exists");
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(data);
     }

@@ -25,7 +25,7 @@ public class ProfileService {
             return updateProfile(profileDTO);
         }
 
-        log.info("Creating new profile: {}", profileDTO.getEmail());
+        log.info("Creating new profile for clerkId: {}", profileDTO.getClerkId());
 
         ProfileDocument profile = ProfileDocument.builder()
                 .clerkId(profileDTO.getClerkId())
@@ -38,7 +38,7 @@ public class ProfileService {
                 .build();
 
         ProfileDocument savedProfile = profileRepository.save(profile);
-        log.info("Profile saved successfully for email: {}", savedProfile.getEmail());
+        log.info("Profile saved successfully for clerkId: {}", savedProfile.getClerkId());
 
         return ProfileDTO.builder()
                 .id(savedProfile.getId())
@@ -53,7 +53,7 @@ public class ProfileService {
     }
 
     public ProfileDTO updateProfile(ProfileDTO profileDTO) {
-        log.info("Updating new profile: {}", profileDTO.getEmail());
+        log.info("Updating new profile: {}", profileDTO.getClerkId());
 
         Optional<ProfileDocument> existingProfile = profileRepository.findByClerkId(profileDTO.getClerkId());
 
@@ -74,7 +74,7 @@ public class ProfileService {
                 updateProfile.setPhotoUrl(profileDTO.getPhotoUrl());
 
             ProfileDocument updatedProfile = profileRepository.save(updateProfile);
-            log.info("Profile updated successfully for email: {}", updatedProfile.getEmail());
+            log.info("Profile updated successfully for clerkId: {}", updatedProfile.getClerkId());
 
             return ProfileDTO.builder()
                     .id(updatedProfile.getId())
