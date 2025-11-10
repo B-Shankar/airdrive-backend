@@ -3,6 +3,7 @@ package in.bhimashankar.airdrive.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import in.bhimashankar.airdrive.dto.ProfileDTO;
+import in.bhimashankar.airdrive.service.ClerkWebhookVerifier;
 import in.bhimashankar.airdrive.service.ProfileService;
 import in.bhimashankar.airdrive.service.UserCreditService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class ClerkWebhookController {
 
     private final ProfileService profileService;
     private final UserCreditService userCreditService;
+    private final ClerkWebhookVerifier clerkWebhookVerifier;
 
     @PostMapping("/clerk")
     public ResponseEntity<?> handleClerkWebhook(@RequestHeader("svix-id") String svixId,
@@ -30,7 +32,7 @@ public class ClerkWebhookController {
                                                 @RequestBody String payload
     ) {
         try {
-            boolean isValid = verifyWebhookSignature(svixId, svixSignature, svixTimestamp, payload);
+            boolean isValid = clerkWebhookVerifier.verifyWebhookSignature(svixId, svixSignature, svixTimestamp, payload);
 
             if (!isValid)
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid webhook signature");
@@ -118,8 +120,4 @@ public class ClerkWebhookController {
         profileService.deleteProfile(clerkId);
     }
 
-    private boolean verifyWebhookSignature(String svixId, String svixSignature, String svixTimestamp, String payload) {
-        //validate the signature
-        return true;
-    }
 }
