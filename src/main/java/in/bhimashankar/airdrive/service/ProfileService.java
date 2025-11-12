@@ -6,10 +6,9 @@ import in.bhimashankar.airdrive.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -54,11 +53,11 @@ public class ProfileService {
     public ProfileDTO updateProfile(ProfileDTO profileDTO) {
         log.info("Updating new profile: {}", profileDTO.getClerkId());
 
-        Optional<ProfileDocument> existingProfile = profileRepository.findByClerkId(profileDTO.getClerkId());
+        ProfileDocument existingProfile = profileRepository.findByClerkId(profileDTO.getClerkId());
 
-        if (existingProfile.isPresent()) {
+        if (existingProfile != null) {
 
-            ProfileDocument updateProfile = existingProfile.get();
+            ProfileDocument updateProfile = existingProfile;
 
             if (profileDTO.getEmail() != null && !profileDTO.getEmail().isEmpty())
                 updateProfile.setEmail(profileDTO.getEmail());
@@ -95,8 +94,31 @@ public class ProfileService {
     }
 
     public void deleteProfile(String clerkId) {
-        Optional<ProfileDocument> existingProfile = profileRepository.findByClerkId(clerkId);
+        ProfileDocument existingProfile = profileRepository.findByClerkId(clerkId);
 
-        existingProfile.ifPresent(profileRepository::delete);
+        profileRepository.delete(existingProfile);
+    }
+
+    public ProfileDocument getCurrentProfile() {
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+            throw new UsernameNotFoundException("User not authenticated");
+        }
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal == null) {
+            throw new UsernameNotFoundException("No principal found in security context");
+        }
+
+        String clerkId = principal.toString();
+        log.debug("Extracted Clerk ID from context: {}", clerkId);
+
+        ProfileDocument profile = profileRepository.findByClerkId(clerkId);
+        if (profile == null) {
+            log.warn("No profile found for Clerk ID: {} — returning null", clerkId);
+            return null;
+        }
+
+        log.debug("Found profile for Clerk ID: {}", clerkId);
+        return profile;
     }
 }

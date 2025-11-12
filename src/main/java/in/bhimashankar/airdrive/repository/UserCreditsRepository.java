@@ -3,5 +3,9 @@ package in.bhimashankar.airdrive.repository;
 import in.bhimashankar.airdrive.document.UserCredits;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.Optional;
+
 public interface UserCreditsRepository extends MongoRepository<UserCredits, String> {
+
+    Optional<UserCredits> findByClerkId(String clerkId);
 }
