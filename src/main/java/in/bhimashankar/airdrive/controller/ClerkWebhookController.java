@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import in.bhimashankar.airdrive.dto.ProfileDTO;
 import in.bhimashankar.airdrive.service.ClerkWebhookVerifier;
 import in.bhimashankar.airdrive.service.ProfileService;
-import in.bhimashankar.airdrive.service.UserCreditService;
+import in.bhimashankar.airdrive.service.UserCreditsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ public class ClerkWebhookController {
     private String webhookSecret;
 
     private final ProfileService profileService;
-    private final UserCreditService userCreditService;
+    private final UserCreditsService userCreditService;
     private final ClerkWebhookVerifier clerkWebhookVerifier;
 
     @PostMapping("/clerk")
