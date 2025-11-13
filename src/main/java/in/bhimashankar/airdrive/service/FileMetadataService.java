@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,6 +20,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -111,5 +113,47 @@ public class FileMetadataService {
         log.info("Retrieved {} file(s) for user: {}", files.size(), profile.getClerkId());
 
         return files.stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
+
+    public FileMetadataDTO getPublicFile(String id) {
+        Optional<FileMetadataDocument> fileOptional = fileMetadataRepository.findById(id);
+
+        if (fileOptional.isEmpty() || !fileOptional.get().isPublic())
+            throw new RuntimeException("Unable to get the file");
+
+        FileMetadataDocument file = fileOptional.get();
+
+        return mapToDTO(file);
+    }
+
+    public FileMetadataDTO getDownloadableFile(String id) {
+        FileMetadataDocument file = fileMetadataRepository.findById(id).orElseThrow(() -> new RuntimeException("File Not Found"));
+
+        return mapToDTO(file);
+    }
+
+    public void deleteFile(String id) {
+        try {
+            ProfileDocument currentProfile = profileService.getCurrentProfile();
+            FileMetadataDocument file = fileMetadataRepository.findById(id).orElseThrow(() -> new RuntimeException("File not found"));
+
+            if (!file.getClerkId().equals(currentProfile.getClerkId()))
+                throw new RuntimeException("File Not belongs to current user");
+
+            Path filePath = Paths.get(file.getFileLocation());
+            Files.deleteIfExists(filePath);
+
+            fileMetadataRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new RuntimeException("Error deleting the file");
+        }
+    }
+
+    public FileMetadataDTO togglePublic(String id) {
+        FileMetadataDocument file = fileMetadataRepository.findById(id).orElseThrow(() -> new RuntimeException("File not found"));
+
+        file.setPublic(!file.isPublic());
+        fileMetadataRepository.save(file);
+        return mapToDTO(file);
     }
 }
