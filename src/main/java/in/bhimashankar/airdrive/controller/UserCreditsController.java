@@ -17,7 +17,7 @@ public class UserCreditsController {
     private final UserCreditsService userCreditsService;
 
     @GetMapping("/credits")
-    public ResponseEntity<?> getUserCredits() {
+    public ResponseEntity<UserCreditsDTO> getUserCredits() {
         UserCredits userCredits = userCreditsService.getUserCredits();
         UserCreditsDTO response = UserCreditsDTO.builder()
                 .credits(userCredits.getCredits())
