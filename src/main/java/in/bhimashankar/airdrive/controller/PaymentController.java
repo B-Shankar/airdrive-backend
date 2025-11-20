@@ -1,6 +1,7 @@
 package in.bhimashankar.airdrive.controller;
 
 import in.bhimashankar.airdrive.dto.PaymentDTO;
+import in.bhimashankar.airdrive.dto.PaymentVerificationDTO;
 import in.bhimashankar.airdrive.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,16 @@ public class PaymentController {
     @PostMapping("/create-order")
     public ResponseEntity<?> createOrder(@RequestBody PaymentDTO paymentDTO) {
         PaymentDTO response = paymentService.createOrder(paymentDTO);
+
+        if (response.getSuccess())
+            return ResponseEntity.ok(response);
+        else
+            return ResponseEntity.badRequest().body(response);
+    }
+
+    @PostMapping("/payment-verify")
+    public ResponseEntity<?> verifyPayment(@RequestBody PaymentVerificationDTO request) {
+        PaymentDTO response = paymentService.verifyPayment(request);
 
         if (response.getSuccess())
             return ResponseEntity.ok(response);

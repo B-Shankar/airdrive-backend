@@ -52,4 +52,13 @@ public class UserCreditsService {
         userCredits.setCredits(userCredits.getCredits() - 1);
         userCreditsRepository.save(userCredits);
     }
+
+    public UserCredits addCredits(String clerkId, int creditsToAdd, String plan) {
+        UserCredits userCredits = userCreditsRepository.findByClerkId(clerkId)
+                .orElseGet(() -> createInitialCredits(clerkId));
+
+        userCredits.setCredits(userCredits.getCredits() + creditsToAdd);
+        userCredits.setPlan(userCredits.getPlan());
+        return userCreditsRepository.save(userCredits);
+    }
 }
