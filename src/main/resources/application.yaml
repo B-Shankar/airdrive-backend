@@ -30,3 +30,8 @@ clerk:
   jwks-url: # ADD
   webhook:
     secret: # ADD
+
+
+razorpay:
+  key-id: rzp_test_1DP5mmOlF5G5ag
+  key-secret: your_key_secret_here
